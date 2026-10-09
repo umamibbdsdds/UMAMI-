@@ -1,4 +1,10 @@
+/* ============================================================
+   UMAMI — Interacción (Vanilla JS)
+   Navbar sticky · Menú móvil accesible · Scroll reveal ·
+   Filtros de carta con loader · Carrusel de reseñas · Horarios
+   ============================================================ */
 
+/* ---------- Utilidades compartidas ---------- */
 
 function estrellasHTML(valor, extra) {
   const pct = Math.max(0, Math.min(100, (Number(valor) / 5) * 100));
@@ -40,7 +46,7 @@ const ALERGENOS = {
 
 function tarjetaPlato(item) {
   const alergenos = item.alergenos.map(a =>
-    `<span class="alergeno"><i data-lucide="${ALERGENOS[a].icono}" aria-hidden="true"></i>${ALERGENOS[a].label}</span>`
+    `<button type="button" class="alergeno alergeno-btn" data-tag="${a}" data-tagtipo="alergeno" aria-pressed="false" title="Filtrar por ${ALERGENOS[a].label}"><i data-lucide="${ALERGENOS[a].icono}" aria-hidden="true"></i>${ALERGENOS[a].label}</button>`
   ).join('');
 
   const tiempo = item.tiempo >= 20
@@ -48,7 +54,7 @@ function tarjetaPlato(item) {
     : `<span class="badge badge-tiempo"><i data-lucide="clock" aria-hidden="true"></i>${item.tiempo} min</span>`;
 
   const etiquetas = item.etiquetas.map(e =>
-    `<span class="badge badge-tiempo"><i data-lucide="leaf" aria-hidden="true"></i>${e === 'vegano' ? 'Vegano' : 'Vegetariano'}</span>`
+    `<button type="button" class="badge badge-tiempo etiqueta-btn" data-tag="${e}" data-tagtipo="etiqueta" aria-pressed="false" title="Filtrar por ${e === 'vegano' ? 'Vegano' : 'Vegetariano'}"><i data-lucide="leaf" aria-hidden="true"></i>${e === 'vegano' ? 'Vegano' : 'Vegetariano'}</button>`
   ).join('');
 
   const destacado = item.destacado
@@ -169,7 +175,7 @@ function initMenuPage() {
   const selectPrecio = document.getElementById('filtro-precio');
   const selectTipo = document.getElementById('filtro-tipo');
 
-  const estado = { categoria: 'todas', tipo: 'todos', precio: 'todos', excluir: new Set(), texto: '' };
+  const estado = { categoria: 'todas', tipo: 'todos', precio: 'todos', excluir: new Set(), texto: '', tag: null };
   let timer = null;
 
   const pasaFiltros = it => {
@@ -183,9 +189,34 @@ function initMenuPage() {
         if (!it.etiquetas.includes('vegetariano') && !it.etiquetas.includes('vegano')) return false;
       } else if (it.alergenos.includes(ex)) return false;
     }
+    if (estado.tag) {
+      if (estado.tag.tipo === 'alergeno') { if (!it.alergenos.includes(estado.tag.valor)) return false; }
+      else if (!it.etiquetas.includes(estado.tag.valor)) return false;
+    }
     const q = estado.texto.trim().toLowerCase();
     if (q && !(it.nombre + ' ' + it.descripcion + ' ' + it.tipo + ' ' + (it.categoria || '')).toLowerCase().includes(q)) return false;
     return true;
+  };
+
+  const etiquetaTag = t => t.tipo === 'alergeno'
+    ? ALERGENOS[t.valor].label
+    : (t.valor === 'vegano' ? 'Vegano' : 'Vegetariano');
+
+  const sincronizarTags = () => {
+    grid.querySelectorAll('.alergeno-btn, .etiqueta-btn').forEach(b => {
+      const activo = Boolean(estado.tag) && b.dataset.tag === estado.tag.valor && b.dataset.tagtipo === estado.tag.tipo;
+      b.setAttribute('aria-pressed', String(activo));
+    });
+  };
+
+  const actualizarBannerTag = () => {
+    const wrap = document.getElementById('tag-activo');
+    if (!wrap) return;
+    if (!estado.tag) { wrap.classList.add('hidden'); wrap.innerHTML = ''; return; }
+    wrap.classList.remove('hidden');
+    wrap.innerHTML = `<span class="text-xs font-semibold uppercase tracking-wider text-carbon-mute">Filtrando por etiqueta:</span>` +
+      `<button type="button" id="quitar-tag" class="chip chip-activo" aria-label="Quitar filtro de etiqueta"><i data-lucide="tag" aria-hidden="true"></i>${etiquetaTag(estado.tag)}<i data-lucide="x" aria-hidden="true"></i></button>`;
+    refrescarIconos();
   };
 
   const render = () => {
@@ -196,6 +227,8 @@ function initMenuPage() {
     vacio.classList.toggle('hidden', items.length > 0);
     refrescarIconos();
     initSkeletons(grid);
+    sincronizarTags();
+    actualizarBannerTag();
   };
 
   const filtrar = (demora = 450) => {
@@ -237,6 +270,20 @@ function initMenuPage() {
     });
   });
 
+  grid.addEventListener('click', e => {
+    const btn = e.target.closest('.alergeno-btn, .etiqueta-btn');
+    if (!btn || !grid.contains(btn)) return;
+    const nuevo = { tipo: btn.dataset.tagtipo, valor: btn.dataset.tag };
+    const mismo = estado.tag && estado.tag.tipo === nuevo.tipo && estado.tag.valor === nuevo.valor;
+    estado.tag = mismo ? null : nuevo;
+    filtrar();
+  });
+
+  const bannerTag = document.getElementById('tag-activo');
+  if (bannerTag) bannerTag.addEventListener('click', e => {
+    if (e.target.closest('#quitar-tag')) { estado.tag = null; filtrar(); }
+  });
+
   if (input) input.addEventListener('input', () => {
     estado.texto = input.value;
     filtrar(280);
@@ -248,6 +295,7 @@ function initMenuPage() {
     estado.precio = 'todos';
     estado.excluir.clear();
     estado.texto = '';
+    estado.tag = null;
     document.querySelectorAll('.filter-tab[data-categoria]').forEach(t =>
       t.setAttribute('aria-pressed', String(t.dataset.categoria === 'todas')));
     document.querySelectorAll('.chip[data-excluir]').forEach(c => c.setAttribute('aria-pressed', 'false'));
@@ -352,6 +400,9 @@ function initResenasPage() {
   window.addEventListener('resize', actualizar);
   actualizar();
 }
+
+/* Exponer para re-render tras publicar una reseña nueva (auth-resenas.js) */
+window.initResenasPage = initResenasPage;
 
 /* ---------- Horarios: estado abierto/cerrado + fila de hoy ---------- */
 
