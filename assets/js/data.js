@@ -1,5 +1,4 @@
 
-
 const UMAMI = {
 
   info: {
@@ -8,7 +7,7 @@ const UMAMI = {
     direccion: '20 Avenida Norte y Diagonal Cipactli, San Salvador',
     telefono: '+503 7200 8919',
     telefonoHref: 'tel:+50372008919',
-    email: 'reservas@umami.sv',
+    email: 'umami8reservas@gmail.com',
     instagram: 'https://www.instagram.com/',
     facebook: 'https://www.facebook.com/',
     maps: 'https://maps.google.com/?q=20+Avenida+Norte,+Diagonal+Cipactli,+San+Salvador,+El+Salvador'
@@ -244,7 +243,7 @@ const UMAMI = {
       fecha: 'Agosto 2026',
       estrellas: 5,
       plato: 'Tiradito Nikkei',
-      texto: 'El tiradito es una obra de arte: la acidez del yuzu con el ajonjolí es perfecta. Atención impecable y el ambiente te transporta. Sin duda, el mejor fusion de San Salvador.'
+      texto: 'El tiradito es una obra de arte: la acidez del yuzu con el ajonjolí es perfecta. Atención impecable y el ambiente te transporta. Sin duda, la mejor fusión de San Salvador.'
     },
     {
       nombre: 'Diego Morales',
