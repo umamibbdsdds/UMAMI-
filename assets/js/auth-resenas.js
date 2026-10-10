@@ -1,45 +1,91 @@
 /* ============================================================
-   UMAMI — Login/registro + reseñas con cuenta (Vanilla JS)
-   NOTA: sitio estático sin backend. La «cuenta» se guarda en el
-   navegador (localStorage); es una autenticación simulada, no
-   sustituye a un login real de servidor.
+   UMAMI — Login/registro + reseñas compartidas
+   Dos modos automáticos:
+   • NUBE: si configuras Supabase en assets/js/supabase-config.js,
+     las cuentas y reseñas se guardan en la nube y las ven TODOS
+     los visitantes.
+   • LOCAL: si no hay configuración, todo se guarda en el navegador
+     (localStorage) y solo lo ve ese dispositivo (modo demo).
    ============================================================ */
 (function () {
   'use strict';
   if (typeof UMAMI === 'undefined') return;
 
+  var CFG = window.UMAMI_SUPABASE || {};
+  var NUBE = !!(CFG.url && CFG.anonKey && window.supabase && window.supabase.createClient);
+  var sb = NUBE ? window.supabase.createClient(CFG.url, CFG.anonKey) : null;
+
   var LS_USERS = 'umami_usuarios';
   var LS_SESSION = 'umami_sesion';
   var LS_RESENAS = 'umami_resenas_usuarios';
 
-  /* ---- Seed original + combinación con reseñas de usuarios ---- */
   var SEED = (window.__UMAMI_SEED_RESENAS = window.__UMAMI_SEED_RESENAS || UMAMI.resenas.slice());
+  var _ses = null;            // sesión actual (modo nube)
+  var _resenasRemotas = [];   // reseñas cargadas de la nube
 
   function leer(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch (e) { return def; } }
   function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
-
-  function resenasUsuarios() { return leer(LS_RESENAS, []); }
-  function usuarios() { return leer(LS_USERS, []); }
-  function sesion() { return leer(LS_SESSION, null); }
-
-  function sincronizar() { UMAMI.resenas = resenasUsuarios().concat(SEED); }
-  sincronizar(); // se ejecuta antes del DOMContentLoaded de main.js
-
-  /* hash simple: evita guardar la contraseña en texto plano (NO es seguridad real) */
-  function hash(s) { var h = 5381, i = s.length; while (i) { h = (h * 33) ^ s.charCodeAt(--i); } return (h >>> 0).toString(16); }
 
   function escapar(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  function iniciales(n) { return n.trim().split(/\s+/).slice(0, 2).map(function (p) { return p[0]; }).join('').toUpperCase(); }
+  function iniciales(n) { return String(n).trim().split(/\s+/).slice(0, 2).map(function (p) { return p[0]; }).join('').toUpperCase(); }
   function mesActual() {
     var m = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     var d = new Date(); return m[d.getMonth()] + ' ' + d.getFullYear();
   }
   function iconos() { if (window.lucide) lucide.createIcons(); }
+  function hash(s) { var h = 5381, i = s.length; while (i) { h = (h * 33) ^ s.charCodeAt(--i); } return (h >>> 0).toString(16); }
 
+  function traducir(msg) {
+    msg = String(msg || '');
+    if (/already registered|already exists/i.test(msg)) return 'Ya existe una cuenta con ese correo. Inicia sesión.';
+    if (/invalid login credentials/i.test(msg)) return 'Correo o contraseña incorrectos.';
+    if (/email not confirmed/i.test(msg)) return 'Debes confirmar tu correo antes de iniciar sesión.';
+    if (/password should be at least/i.test(msg)) return 'La contraseña debe tener al menos 6 caracteres.';
+    return msg;
+  }
+
+  /* ---------- Capa de datos (nube o local) ---------- */
+  function sesionLocal() { return leer(LS_SESSION, null); }
+  function usuariosLocal() { return leer(LS_USERS, []); }
+  function listaResenasLocal() { return leer(LS_RESENAS, []); }
+
+  function sesionActual() { return NUBE ? _ses : sesionLocal(); }
+  function misResenas() { return NUBE ? _resenasRemotas : listaResenasLocal(); }
+
+  function sincronizar() { UMAMI.resenas = misResenas().concat(SEED); }
+
+  function refrescarVista() {
+    sincronizar();
+    if (typeof window.initResenasPage === 'function') window.initResenasPage();
+    marcarPropias();
+  }
+
+  function mapFila(r) {
+    return { nombre: r.nombre, email: r.email || '', fecha: r.fecha || '', estrellas: r.estrellas, plato: r.plato, texto: r.texto };
+  }
+
+  function cargarResenasRemotas() {
+    if (!NUBE) return Promise.resolve();
+    return sb.from('resenas').select('*').order('created_at', { ascending: false })
+      .then(function (res) {
+        if (res.error) { console.warn('Umami: no se pudieron cargar reseñas → ' + res.error.message); return; }
+        _resenasRemotas = (res.data || []).map(mapFila);
+      });
+  }
+
+  function syncSesionNube(session) {
+    if (session && session.user) {
+      var u = session.user;
+      var nombre = (u.user_metadata && u.user_metadata.nombre) || (u.email ? u.email.split('@')[0] : 'Invitado');
+      _ses = { nombre: nombre, email: u.email || '' };
+    } else { _ses = null; }
+  }
+
+  sincronizar(); // primera pintura (modo local trae sus reseñas; nube trae solo seed hasta cargar)
   /* ---------- Modal de autenticación ---------- */
   var modal, ultimoFoco = null;
 
@@ -67,7 +113,6 @@
     modal.querySelector('#form-login').classList.toggle('activo', cual === 'login');
     modal.querySelector('#form-registro').classList.toggle('activo', cual === 'registro');
   }
-
   function aviso(id, tipo, texto) {
     var el = document.getElementById(id);
     if (!el) return;
@@ -75,13 +120,60 @@
     el.textContent = texto;
   }
 
+  function registrar(nombre, email, pass) {
+    if (NUBE) {
+      sb.auth.signUp({ email: email, password: pass, options: { data: { nombre: nombre } } })
+        .then(function (res) {
+          if (res.error) return aviso('registro-aviso', 'error', traducir(res.error.message));
+          if (res.data && res.data.session) {
+            syncSesionNube(res.data.session);
+            aviso('registro-aviso', 'ok', '¡Cuenta creada! Ya puedes dejar tu reseña.');
+            setTimeout(function () { cerrarModal(); renderGate(); }, 650);
+          } else {
+            aviso('registro-aviso', 'ok', 'Cuenta creada. Revisa tu correo para confirmarla e inicia sesión.');
+          }
+        });
+      return;
+    }
+    var lista = usuariosLocal();
+    if (lista.some(function (u) { return u.email === email; }))
+      return aviso('registro-aviso', 'error', 'Ya existe una cuenta con ese correo. Inicia sesión.');
+    lista.push({ nombre: nombre, email: email, pass: hash(pass) });
+    guardar(LS_USERS, lista);
+    guardar(LS_SESSION, { nombre: nombre, email: email });
+    aviso('registro-aviso', 'ok', '¡Cuenta creada! Ya puedes dejar tu reseña.');
+    setTimeout(function () { cerrarModal(); renderGate(); }, 650);
+  }
+
+  function entrar(email, pass) {
+    if (NUBE) {
+      sb.auth.signInWithPassword({ email: email, password: pass })
+        .then(function (res) {
+          if (res.error) return aviso('login-aviso', 'error', traducir(res.error.message));
+          syncSesionNube(res.data.session);
+          aviso('login-aviso', 'ok', 'Sesión iniciada. ¡Bienvenido/a de nuevo!');
+          setTimeout(function () { cerrarModal(); renderGate(); }, 500);
+        });
+      return;
+    }
+    var u = usuariosLocal().filter(function (x) { return x.email === email; })[0];
+    if (!u || u.pass !== hash(pass))
+      return aviso('login-aviso', 'error', 'Correo o contraseña incorrectos.');
+    guardar(LS_SESSION, { nombre: u.nombre, email: u.email });
+    aviso('login-aviso', 'ok', 'Sesión iniciada. ¡Bienvenido/a de nuevo!');
+    setTimeout(function () { cerrarModal(); renderGate(); }, 500);
+  }
+
+  function salir(cb) {
+    if (NUBE) { sb.auth.signOut().then(function () { _ses = null; if (cb) cb(); }); return; }
+    try { localStorage.removeItem(LS_SESSION); } catch (e) {}
+    if (cb) cb();
+  }
+
   function initModal() {
     modal = document.getElementById('auth-modal');
     if (!modal) return;
-
-    modal.querySelectorAll('[data-auth-cerrar]').forEach(function (b) {
-      b.addEventListener('click', cerrarModal);
-    });
+    modal.querySelectorAll('[data-auth-cerrar]').forEach(function (b) { b.addEventListener('click', cerrarModal); });
     modal.querySelectorAll('.auth-tab').forEach(function (t) {
       t.addEventListener('click', function () { cambiarTab(t.dataset.authTab); });
     });
@@ -89,7 +181,6 @@
       if (e.key === 'Escape' && modal.classList.contains('open')) cerrarModal();
     });
 
-    /* Registro */
     modal.querySelector('#form-registro').addEventListener('submit', function (e) {
       e.preventDefault();
       var nombre = document.getElementById('reg-nombre').value.trim();
@@ -98,32 +189,18 @@
       if (nombre.length < 2) return aviso('registro-aviso', 'error', 'Escribe tu nombre completo.');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return aviso('registro-aviso', 'error', 'Correo electrónico no válido.');
       if (pass.length < 6) return aviso('registro-aviso', 'error', 'La contraseña debe tener al menos 6 caracteres.');
-      var lista = usuarios();
-      if (lista.some(function (u) { return u.email === email; }))
-        return aviso('registro-aviso', 'error', 'Ya existe una cuenta con ese correo. Inicia sesión.');
-      lista.push({ nombre: nombre, email: email, pass: hash(pass) });
-      guardar(LS_USERS, lista);
-      guardar(LS_SESSION, { nombre: nombre, email: email });
-      aviso('registro-aviso', 'ok', '¡Cuenta creada! Ya puedes dejar tu reseña.');
-      setTimeout(function () { cerrarModal(); renderGate(); }, 650);
+      registrar(nombre, email, pass);
     });
 
-    /* Login */
     modal.querySelector('#form-login').addEventListener('submit', function (e) {
       e.preventDefault();
       var email = document.getElementById('login-email').value.trim().toLowerCase();
       var pass = document.getElementById('login-pass').value;
-      var u = usuarios().filter(function (x) { return x.email === email; })[0];
-      if (!u || u.pass !== hash(pass))
-        return aviso('login-aviso', 'error', 'Correo o contraseña incorrectos.');
-      guardar(LS_SESSION, { nombre: u.nombre, email: u.email });
-      aviso('login-aviso', 'ok', 'Sesión iniciada. ¡Bienvenido/a de nuevo!');
-      setTimeout(function () { cerrarModal(); renderGate(); }, 500);
+      entrar(email, pass);
     });
 
     iconos();
   }
-
   /* ---------- Panel de reseña (según sesión) ---------- */
   function opcionesPlatos() {
     return UMAMI.menu.map(function (p) {
@@ -131,10 +208,39 @@
     }).join('');
   }
 
+  function publicarResena(nueva, gate) {
+    if (NUBE) {
+      sb.from('resenas').insert({
+        nombre: nueva.nombre, email: nueva.email, fecha: nueva.fecha,
+        estrellas: nueva.estrellas, plato: nueva.plato, texto: nueva.texto
+      }).then(function (res) {
+        if (res.error) return aviso('resena-aviso', 'error', 'No se pudo publicar: ' + traducir(res.error.message));
+        cargarResenasRemotas().then(function () {
+          refrescarVista();
+          aviso('resena-aviso', 'ok', '¡Gracias! Tu reseña ya aparece arriba y la verán todos.');
+          var f = gate.querySelector('#form-resena'); if (f) f.reset();
+          var c = gate.querySelector('#star5'); if (c) c.checked = true;
+          var sec = document.getElementById('titulo-testimonios');
+          if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      return;
+    }
+    var lista = listaResenasLocal();
+    lista.unshift(nueva);
+    guardar(LS_RESENAS, lista);
+    refrescarVista();
+    aviso('resena-aviso', 'ok', '¡Gracias! Tu reseña ya aparece arriba.');
+    var ff = gate.querySelector('#form-resena'); if (ff) ff.reset();
+    var cc = gate.querySelector('#star5'); if (cc) cc.checked = true;
+    var sec2 = document.getElementById('titulo-testimonios');
+    if (sec2) sec2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function renderGate() {
     var gate = document.getElementById('resena-gate');
     if (!gate) return;
-    var ses = sesion();
+    var ses = sesionActual();
 
     if (!ses) {
       gate.innerHTML =
@@ -181,10 +287,7 @@
         '<button type="submit" class="btn btn-primary self-start"><i data-lucide="send" aria-hidden="true"></i>Publicar reseña</button>' +
       '</form>';
 
-    gate.querySelector('#cerrar-sesion').addEventListener('click', function () {
-      try { localStorage.removeItem(LS_SESSION); } catch (e) {}
-      renderGate();
-    });
+    gate.querySelector('#cerrar-sesion').addEventListener('click', function () { salir(renderGate); });
 
     gate.querySelector('#form-resena').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -193,38 +296,33 @@
       var texto = gate.querySelector('#resena-texto').value.trim();
       if (!estrellas) return aviso('resena-aviso', 'error', 'Elige una calificación.');
       if (texto.length < 12) return aviso('resena-aviso', 'error', 'Escribe un poco más sobre tu experiencia (mínimo 12 caracteres).');
-      var nueva = { nombre: ses.nombre, email: ses.email, fecha: mesActual(), estrellas: estrellas, plato: plato, texto: texto };
-      var lista = resenasUsuarios();
-      lista.unshift(nueva);
-      guardar(LS_RESENAS, lista);
-      sincronizar();
-      if (typeof window.initResenasPage === 'function') window.initResenasPage();
-      aviso('resena-aviso', 'ok', '¡Gracias! Tu reseña ya aparece arriba.');
-      e.target.reset();
-      var cinco = gate.querySelector('#star5'); if (cinco) cinco.checked = true;
-      marcarPropias();
-      var sec = document.getElementById('titulo-testimonios');
-      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      publicarResena({ nombre: ses.nombre, email: ses.email, fecha: mesActual(), estrellas: estrellas, plato: plato, texto: texto }, gate);
     });
 
     iconos();
     marcarPropias();
   }
 
-  /* Marca con un distintivo las tarjetas que pertenecen al usuario */
   function marcarPropias() {
     var track = document.getElementById('resenas-track');
     if (!track) return;
-    var ses = sesion();
-    var mios = resenasUsuarios();
+    var ses = sesionActual();
+    var mios = misResenas();
     for (var i = 0; i < mios.length; i++) {
       var card = track.children[i];
-      if (card && ses && mios[i].email === ses.email) card.classList.add('resena-propia');
+      if (card && ses && mios[i].email && mios[i].email === ses.email) card.classList.add('resena-propia');
     }
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     initModal();
-    renderGate();
+    if (NUBE) {
+      sb.auth.getSession()
+        .then(function (r) { syncSesionNube(r.data.session); return cargarResenasRemotas(); })
+        .then(function () { refrescarVista(); renderGate(); });
+      sb.auth.onAuthStateChange(function (_e, session) { syncSesionNube(session); renderGate(); });
+    } else {
+      renderGate();
+    }
   });
 })();
