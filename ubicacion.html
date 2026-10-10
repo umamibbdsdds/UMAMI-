@@ -459,8 +459,14 @@
           personas: parseInt(val('r-personas'), 10) || null,
           comentarios: val('r-comentarios')
         }).then(function (res) {
-          if (res && res.error) console.warn('Umami: no se pudo guardar la reserva en la nube.');
-        }).catch(function () {});
+          if (res && res.error) {
+            console.error('Umami: la reserva NO se guardó en Supabase.', res.error.message || res.error);
+          } else {
+            console.log('Umami: reserva guardada en Supabase correctamente.');
+          }
+        }).catch(function (err) {
+          console.error('Umami: error al conectar con Supabase.', (err && err.message) || err);
+        });
       }
 
       form.addEventListener('submit', function (e) {
