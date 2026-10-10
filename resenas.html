@@ -36,7 +36,6 @@
 
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-  <!-- ═══════════ HEADER / NAVBAR (en Flask: partial compartido en base.html) ═══════════ -->
   <header id="site-header">
     <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-16 lg:h-20" aria-label="Navegación principal">
       <a href="index.html" class="brand" aria-label="Umami — Inicio">
@@ -56,7 +55,6 @@
     </nav>
   </header>
 
-  <!-- ═══════════ MENÚ MÓVIL (overlay) ═══════════ -->
   <div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación" inert>
     <div class="mobile-menu-backdrop"></div>
     <div class="mobile-menu-panel">
@@ -84,7 +82,6 @@
 
   <main id="contenido">
 
-    <!-- ═══════════ ENCABEZADO DE PÁGINA ═══════════ -->
     <section class="page-hero pt-32 lg:pt-40 pb-14 lg:pb-20">
       <span class="kanji-agua" aria-hidden="true">声</span>
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +95,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ PROMEDIO + DISTRIBUCIÓN ═══════════ -->
     <section class="py-14 lg:py-20" aria-labelledby="titulo-promedio">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-10 lg:gap-16 lg:grid-cols-2 items-center">
 
@@ -119,7 +115,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ CARRUSEL DE RESEÑAS ═══════════ -->
     <section class="bg-crema-sand py-14 lg:py-20" aria-labelledby="titulo-testimonios">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-end justify-between gap-6 mb-10">
@@ -143,7 +138,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ DEJA TU RESEÑA (requiere cuenta) ═══════════ -->
     <section class="py-14 lg:py-20" aria-labelledby="titulo-nueva-resena">
       <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10 reveal">
@@ -157,7 +151,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ CTA ═══════════ -->
     <section class="relative overflow-hidden bg-terracota-deep py-16 lg:py-20">
       <span class="pointer-events-none absolute -bottom-10 right-4 select-none font-display text-[13rem] leading-none text-white/10" aria-hidden="true">旨</span>
       <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -172,7 +165,6 @@
     </section>
   </main>
 
-  <!-- ═══════════ FOOTER (en Flask: partial compartido en base.html) ═══════════ -->
   <footer class="bg-carbon text-[#E8E4D9]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div>
@@ -198,7 +190,7 @@
         <ul class="space-y-3 text-sm text-[#B9B4A8]">
           <li class="dato-linea"><i data-lucide="map-pin" class="!text-terracota" aria-hidden="true"></i> 20 Avenida Norte y Diagonal Cipactli, San Salvador</li>
           <li class="dato-linea"><i data-lucide="phone" class="!text-terracota" aria-hidden="true"></i> <a href="tel:+50372008919" class="hover:text-dorado-light transition-colors duration-300">+503 7200 8919</a></li>
-          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:reservas@umami.sv" class="hover:text-dorado-light transition-colors duration-300">reservas@umami.sv</a></li>
+          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:umami8reservas@gmail.com" class="hover:text-dorado-light transition-colors duration-300">umami8reservas@gmail.com</a></li>
         </ul>
       </div>
       <div>
@@ -219,7 +211,6 @@
     </div>
   </footer>
 
-  <!-- ═══════════ BOTONES FLOTANTES (acciones rápidas) ═══════════ -->
   <div class="fab-acciones" aria-label="Acciones rápidas">
     <a href="menu.html" class="fab-btn fab-menu" aria-label="Consultar menú">
       <i data-lucide="utensils" aria-hidden="true"></i>
@@ -227,7 +218,6 @@
     </a>
   </div>
 
-  <!-- ═══════════ MODAL DE AUTENTICACIÓN (login / registro) ═══════════ -->
   <div id="auth-modal" class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-titulo" inert>
     <div class="auth-backdrop" data-auth-cerrar aria-hidden="true"></div>
     <div class="auth-card">
@@ -250,7 +240,10 @@
         </div>
         <div class="form-campo">
           <label for="login-pass">Contraseña</label>
-          <input type="password" id="login-pass" class="form-control" autocomplete="current-password" placeholder="Tu contraseña" required>
+          <div class="pass-wrap">
+            <input type="password" id="login-pass" class="form-control" autocomplete="current-password" placeholder="Tu contraseña" required>
+            <button type="button" class="pass-toggle" data-target="login-pass" aria-label="Mostrar contraseña"><i data-lucide="eye" aria-hidden="true"></i></button>
+          </div>
         </div>
         <div id="login-aviso" role="alert" aria-live="polite"></div>
         <button type="submit" class="btn btn-primary w-full"><i data-lucide="log-in" aria-hidden="true"></i>Entrar</button>
@@ -267,7 +260,10 @@
         </div>
         <div class="form-campo">
           <label for="reg-pass">Contraseña</label>
-          <input type="password" id="reg-pass" class="form-control" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required>
+          <div class="pass-wrap">
+            <input type="password" id="reg-pass" class="form-control" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required>
+            <button type="button" class="pass-toggle" data-target="reg-pass" aria-label="Mostrar contraseña"><i data-lucide="eye" aria-hidden="true"></i></button>
+          </div>
         </div>
         <div id="registro-aviso" role="alert" aria-live="polite"></div>
         <button type="submit" class="btn btn-primary w-full"><i data-lucide="user-plus" aria-hidden="true"></i>Crear cuenta</button>
@@ -281,5 +277,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-config.js"></script>
   <script src="assets/js/auth-resenas.js"></script>
+  <script>
+    (function () {
+      document.querySelectorAll('.pass-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var input = document.getElementById(btn.getAttribute('data-target'));
+          if (!input) return;
+          var mostrar = input.type === 'password';
+          input.type = mostrar ? 'text' : 'password';
+          btn.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
+          btn.innerHTML = mostrar
+            ? '<i data-lucide="eye-off" aria-hidden="true"></i>'
+            : '<i data-lucide="eye" aria-hidden="true"></i>';
+          if (window.lucide) lucide.createIcons();
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
