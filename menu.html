@@ -36,7 +36,6 @@
 
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-  <!-- ═══════════ HEADER / NAVBAR ═══════════ -->
   <header id="site-header">
     <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-16 lg:h-20" aria-label="Navegación principal">
       <a href="index.html" class="brand" aria-label="Umami — Inicio">
@@ -56,7 +55,6 @@
     </nav>
   </header>
 
-  <!-- ═══════════ MENÚ MÓVIL (overlay) ═══════════ -->
   <div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación" inert>
     <div class="mobile-menu-backdrop"></div>
     <div class="mobile-menu-panel">
@@ -84,7 +82,6 @@
 
   <main id="contenido">
 
-    <!-- ═══════════ ENCABEZADO DE PÁGINA ═══════════ -->
     <section class="page-hero pt-32 lg:pt-40 pb-14 lg:pb-20">
       <span class="kanji-agua" aria-hidden="true">味</span>
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -106,13 +103,11 @@
       </div>
     </section>
 
-    <!-- ═══════════ FILTROS + CARTA ═══════════ -->
     <section class="py-14 lg:py-20" aria-labelledby="titulo-carta">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <h2 id="titulo-carta" class="sr-only">Explorador de la carta</h2>
 
-        <!-- Búsqueda + tipo + precio -->
         <div class="flex flex-col sm:flex-row gap-4 mb-6">
           <div class="input-buscador">
             <i data-lucide="search" aria-hidden="true"></i>
@@ -141,7 +136,6 @@
           </div>
         </div>
 
-        <!-- Pestañas de categoría -->
         <div class="filter-tabs-row flex flex-wrap justify-center gap-2.5 mb-6" role="group" aria-label="Filtrar por categoría">
           <button class="filter-tab" data-categoria="todas" aria-pressed="true"><i data-lucide="utensils" aria-hidden="true"></i>Todos</button>
           <button class="filter-tab" data-categoria="entradas" aria-pressed="false"><i data-lucide="salad" aria-hidden="true"></i>Entradas</button>
@@ -150,7 +144,6 @@
           <button class="filter-tab" data-categoria="bebidas" aria-pressed="false"><i data-lucide="martini" aria-hidden="true"></i>Bebidas</button>
         </div>
 
-        <!-- Chips de alérgenos y preferencias -->
         <div class="flex flex-wrap items-center justify-center gap-2.5 mb-5">
           <span class="text-xs font-semibold uppercase tracking-wider text-carbon-mute mr-1">Mostrar solo:</span>
           <button class="chip" data-excluir="gluten" aria-pressed="false"><i data-lucide="wheat-off" aria-hidden="true"></i>Sin gluten</button>
@@ -159,22 +152,17 @@
           <button class="chip" data-excluir="vegetariano" aria-pressed="false"><i data-lucide="leaf" aria-hidden="true"></i>Vegetariano</button>
         </div>
 
-        <!-- Filtro activo por etiqueta (clic en una etiqueta de plato) -->
         <div id="tag-activo" class="tag-activo-wrap hidden flex flex-wrap items-center justify-center gap-2.5 mb-10" role="status" aria-live="polite"></div>
 
-        <!-- Contador de resultados -->
         <p id="menu-count" class="text-sm font-medium text-oliva-ink mb-6" role="status" aria-live="polite">Cargando la carta…</p>
 
-        <!-- Loader de filtrado -->
         <div id="menu-loader" class="loader-area" aria-hidden="true">
           <div class="spinner" role="img" aria-label="Cargando"></div>
           <p>Preparando la carta…</p>
         </div>
 
-        <!-- Grilla de platos -->
         <div id="menu-grid" class="grid gap-8 sm:grid-cols-2 xl:grid-cols-3"></div>
 
-        <!-- Estado vacío -->
         <div id="menu-empty" class="hidden text-center py-16">
           <div class="icono-circulo verde mx-auto mb-5 scale-125"><i data-lucide="search-x" aria-hidden="true"></i></div>
           <h3 class="font-display text-2xl font-semibold mb-2">No encontramos ese sabor</h3>
@@ -182,7 +170,6 @@
           <button id="limpiar-filtros" class="btn btn-outline-dark">Limpiar filtros <i data-lucide="rotate-ccw" aria-hidden="true"></i></button>
         </div>
 
-        <!-- Nota informativa -->
         <div class="mt-14 bg-crema-sand border border-[#E7E2D8] rounded-2xl px-6 py-5 flex items-start gap-4 max-w-3xl mx-auto">
           <i data-lucide="info" class="!w-5 !h-5 text-oliva mt-0.5 shrink-0" aria-hidden="true"></i>
           <p class="text-sm text-carbon-mute leading-relaxed">
@@ -192,7 +179,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ CTA ═══════════ -->
     <section class="bg-oliva-ink text-white py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
         <div>
@@ -204,7 +190,6 @@
     </section>
   </main>
 
-  <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="bg-carbon text-[#E8E4D9]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div>
@@ -230,7 +215,7 @@
         <ul class="space-y-3 text-sm text-[#B9B4A8]">
           <li class="dato-linea"><i data-lucide="map-pin" class="!text-terracota" aria-hidden="true"></i> 20 Avenida Norte y Diagonal Cipactli, San Salvador</li>
           <li class="dato-linea"><i data-lucide="phone" class="!text-terracota" aria-hidden="true"></i> <a href="tel:+50372008919" class="hover:text-dorado-light transition-colors duration-300">+503 7200 8919</a></li>
-          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:reservas@umami.sv" class="hover:text-dorado-light transition-colors duration-300">reservas@umami.sv</a></li>
+          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:umami8reservas@gmail.com" class="hover:text-dorado-light transition-colors duration-300">umami8reservas@gmail.com</a></li>
         </ul>
       </div>
       <div>
@@ -251,7 +236,6 @@
     </div>
   </footer>
 
-  <!-- ═══════════ BOTONES FLOTANTES (acciones rápidas) ═══════════ -->
   <div class="fab-acciones" aria-label="Acciones rápidas">
     <a href="menu.html" class="fab-btn fab-menu" aria-label="Consultar menú">
       <i data-lucide="utensils" aria-hidden="true"></i>
