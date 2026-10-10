@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel de administración · Umami</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    body { background: var(--sand, #f3efe6); color: var(--carbon, #1b1b16); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .admin-wrap { max-width: 1040px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .admin-gate { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem;
+      background: linear-gradient(rgba(20,20,15,.78), rgba(20,20,15,.9)); z-index: 50; }
+    .admin-gate-card { width: min(420px, 94vw); background: rgba(253,251,247,.98); border: 1px solid rgba(212,175,55,.4);
+      border-radius: 1.4rem; padding: 2.2rem 1.9rem; box-shadow: 0 40px 80px -30px rgba(0,0,0,.7); text-align: center; }
+    .admin-logo { height: 64px; margin: 0 auto 1rem; display: block; }
+    .admin-gate .form-campo { text-align: left; margin-bottom: .9rem; }
+    #admin-aviso { color: #a93a2b; font-size: .82rem; font-weight: 600; min-height: 1.1rem; margin-bottom: .4rem; }
+    .admin-head { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 1.6rem; }
+    .admin-brand { display: flex; align-items: center; gap: .8rem; }
+    .admin-brand img { height: 44px; }
+    .admin-brand h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; }
+    .admin-acciones { display: flex; gap: .6rem; }
+    .admin-tabs { display: flex; gap: .5rem; background: #fff; border: 1px solid var(--linea, #e7e2d8); border-radius: 999px; padding: .3rem; margin-bottom: 1.4rem; max-width: 460px; }
+    .admin-tab { flex: 1; border: none; background: transparent; cursor: pointer; font-weight: 700; font-size: .9rem; padding: .6rem 1rem; border-radius: 999px; color: var(--carbon-soft, #4a4a40); transition: all .25s ease; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; }
+    .admin-tab[aria-selected="true"] { background: var(--terracota-dark, #a93a2b); color: #fff; }
+    .admin-badge { background: rgba(255,255,255,.3); border-radius: 999px; padding: 0 .5rem; font-size: .75rem; }
+    .admin-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+    @media (min-width: 720px) { .admin-grid { grid-template-columns: 1fr 1fr; } }
+    .admin-card { background: #fff; border: 1px solid var(--linea, #e7e2d8); border-radius: 1rem; padding: 1.1rem 1.2rem; box-shadow: 0 10px 24px -18px rgba(0,0,0,.4); }
+    .admin-card-top { display: flex; align-items: start; justify-content: space-between; gap: .6rem; margin-bottom: .6rem; }
+    .admin-card-top h3 { font-weight: 700; font-size: 1.02rem; }
+    .admin-borrar { flex: none; width: 2.1rem; height: 2.1rem; border-radius: .6rem; border: 1px solid var(--linea, #e7e2d8); background: #fff; color: #a93a2b; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all .2s ease; }
+    .admin-borrar:hover { background: #a93a2b; color: #fff; }
+    .admin-borrar i, .admin-borrar svg { width: 1.1rem; height: 1.1rem; }
+    .admin-datos { display: flex; flex-direction: column; gap: .4rem; font-size: .86rem; color: var(--carbon-soft, #4a4a40); }
+    .admin-datos li { display: flex; gap: .5rem; align-items: start; }
+    .admin-datos i, .admin-datos svg { width: 1rem; height: 1rem; margin-top: .15rem; color: var(--terracota-dark, #a93a2b); flex: none; }
+    .admin-estrellas { color: #d4af37; letter-spacing: .1em; font-size: 1rem; margin-bottom: .4rem; }
+    .admin-estrellas span { color: var(--carbon-soft, #4a4a40); font-size: .8rem; letter-spacing: 0; }
+    .admin-texto { font-size: .9rem; line-height: 1.5; margin-bottom: .6rem; }
+    .admin-fecha { font-size: .76rem; color: var(--carbon-mute, #8a8578); }
+    .admin-vacio { grid-column: 1 / -1; text-align: center; color: var(--carbon-mute, #8a8578); padding: 2rem 1rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-gate" id="admin-gate">
+    <div class="admin-gate-card">
+      <img src="assets/img/logo.png" alt="Umami" class="admin-logo">
+      <h2 class="font-display text-2xl font-semibold text-carbon">Acceso restringido</h2>
+      <p class="text-sm text-carbon-mute mt-1 mb-5">Panel exclusivo para la administración de Umami.</p>
+      <form id="form-admin" novalidate>
+        <div class="form-campo">
+          <label for="admin-user">Correo electrónico</label>
+          <input type="email" id="admin-user" class="form-control" autocomplete="username" placeholder="Correo de administrador" required>
+        </div>
+        <div class="form-campo">
+          <label for="admin-pass">Contraseña</label>
+          <div class="pass-wrap">
+            <input type="password" id="admin-pass" class="form-control" autocomplete="current-password" placeholder="Contraseña" required>
+            <button type="button" class="pass-toggle" data-target="admin-pass" aria-label="Mostrar contraseña"><i data-lucide="eye" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div id="admin-aviso" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary w-full"><i data-lucide="log-in" aria-hidden="true"></i>Entrar</button>
+      </form>
+      <p class="text-xs text-carbon-mute mt-4"><a href="index.html" class="hover:underline">← Volver al sitio</a></p>
+    </div>
+  </div>
+
+  <main class="admin-panel" id="admin-panel" style="display:none;">
+    <div class="admin-wrap">
+      <div class="admin-head">
+        <div class="admin-brand">
+          <img src="assets/img/logo.png" alt="Umami">
+          <h1>Panel de administración</h1>
+        </div>
+        <div class="admin-acciones">
+          <button type="button" id="btn-refrescar" class="btn btn-outline-dark"><i data-lucide="refresh-cw" aria-hidden="true"></i>Actualizar</button>
+          <button type="button" id="btn-salir" class="btn btn-primary"><i data-lucide="log-out" aria-hidden="true"></i>Salir</button>
+        </div>
+      </div>
+
+      <div class="admin-tabs" role="tablist">
+        <button type="button" class="admin-tab" role="tab" data-admin-tab="reservas" aria-selected="true"><i data-lucide="calendar-check" aria-hidden="true"></i>Reservas <span class="admin-badge" id="count-reservas">0</span></button>
+        <button type="button" class="admin-tab" role="tab" data-admin-tab="resenas" aria-selected="false"><i data-lucide="message-square" aria-hidden="true"></i>Reseñas <span class="admin-badge" id="count-resenas">0</span></button>
+      </div>
+
+      <section data-admin-seccion="reservas" style="display:block;">
+        <div class="admin-grid" id="lista-reservas"></div>
+      </section>
+      <section data-admin-seccion="resenas" style="display:none;">
+        <div class="admin-grid" id="lista-resenas"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script>
+    (function () {
+      if (window.lucide) lucide.createIcons();
+      document.querySelectorAll('.pass-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var input = document.getElementById(btn.getAttribute('data-target'));
+          if (!input) return;
+          var mostrar = input.type === 'password';
+          input.type = mostrar ? 'text' : 'password';
+          btn.innerHTML = mostrar ? '<i data-lucide="eye-off" aria-hidden="true"></i>' : '<i data-lucide="eye" aria-hidden="true"></i>';
+          if (window.lucide) lucide.createIcons();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
