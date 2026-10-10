@@ -36,7 +36,6 @@
 
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-  <!-- ═══════════ HEADER / NAVBAR (en Flask: partial compartido en base.html) ═══════════ -->
   <header id="site-header">
     <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-16 lg:h-20" aria-label="Navegación principal">
       <a href="index.html" class="brand" aria-label="Umami — Inicio">
@@ -56,7 +55,6 @@
     </nav>
   </header>
 
-  <!-- ═══════════ MENÚ MÓVIL (overlay) ═══════════ -->
   <div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación" inert>
     <div class="mobile-menu-backdrop"></div>
     <div class="mobile-menu-panel">
@@ -84,7 +82,6 @@
 
   <main id="contenido">
 
-    <!-- ═══════════ ENCABEZADO DE PÁGINA ═══════════ -->
     <section class="page-hero pt-32 lg:pt-40 pb-14 lg:pb-20">
       <span class="kanji-agua" aria-hidden="true">場</span>
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +95,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ MAPA + DATOS DE CONTACTO ═══════════ -->
     <section class="py-14 lg:py-20" aria-labelledby="titulo-mapa">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid gap-10 lg:gap-14 lg:grid-cols-2 items-start">
 
@@ -143,7 +139,7 @@
               <span class="icono-circulo dorado"><i data-lucide="mail" aria-hidden="true"></i></span>
               <div>
                 <h3 class="font-semibold mb-1">Correo</h3>
-                <p class="text-carbon-soft leading-relaxed"><a href="mailto:reservas@umami.sv" class="hover:text-terracota-dark transition-colors duration-300">reservas@umami.sv</a></p>
+                <p class="text-carbon-soft leading-relaxed"><a href="mailto:umami8reservas@gmail.com" class="hover:text-terracota-dark transition-colors duration-300">umami8reservas@gmail.com</a></p>
               </div>
             </li>
             <li class="flex gap-5 items-start">
@@ -171,7 +167,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ HORARIOS ═══════════ -->
     <section class="bg-crema-sand py-14 lg:py-20" aria-labelledby="titulo-horarios">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10 reveal">
@@ -230,7 +225,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ RESERVAS ═══════════ -->
     <section id="reservas" class="py-14 lg:py-20" aria-labelledby="titulo-reservas">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid gap-10 lg:gap-14 lg:grid-cols-2 items-center">
@@ -241,7 +235,8 @@
 
             <div class="flex flex-wrap gap-4">
               <a href="tel:+50372008919" class="btn btn-primary"><i data-lucide="phone" aria-hidden="true"></i>Llamar ahora</a>
-              <a href="mailto:reservas@umami.sv" class="btn btn-outline-dark"><i data-lucide="mail" aria-hidden="true"></i>Escribir un correo</a>
+              <button type="button" class="btn btn-primary" data-abrir-reserva><i data-lucide="calendar-check" aria-hidden="true"></i>Reservar en línea</button>
+              <a href="mailto:umami8reservas@gmail.com" class="btn btn-outline-dark"><i data-lucide="mail" aria-hidden="true"></i>Escribir un correo</a>
             </div>
           </div>
 
@@ -273,7 +268,6 @@
     </section>
   </main>
 
-  <!-- ═══════════ FOOTER (en Flask: partial compartido en base.html) ═══════════ -->
   <footer class="bg-carbon text-[#E8E4D9]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div>
@@ -299,7 +293,7 @@
         <ul class="space-y-3 text-sm text-[#B9B4A8]">
           <li class="dato-linea"><i data-lucide="map-pin" class="!text-terracota" aria-hidden="true"></i> 20 Avenida Norte y Diagonal Cipactli, San Salvador</li>
           <li class="dato-linea"><i data-lucide="phone" class="!text-terracota" aria-hidden="true"></i> <a href="tel:+50372008919" class="hover:text-dorado-light transition-colors duration-300">+503 7200 8919</a></li>
-          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:reservas@umami.sv" class="hover:text-dorado-light transition-colors duration-300">reservas@umami.sv</a></li>
+          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:umami8reservas@gmail.com" class="hover:text-dorado-light transition-colors duration-300">umami8reservas@gmail.com</a></li>
         </ul>
       </div>
       <div>
@@ -320,7 +314,6 @@
     </div>
   </footer>
 
-  <!-- ═══════════ BOTONES FLOTANTES (acciones rápidas) ═══════════ -->
   <div class="fab-acciones" aria-label="Acciones rápidas">
     <a href="menu.html" class="fab-btn fab-menu" aria-label="Consultar menú">
       <i data-lucide="utensils" aria-hidden="true"></i>
@@ -328,8 +321,175 @@
     </a>
   </div>
 
+  <div class="auth-modal" id="modal-reserva" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reserva-titulo">
+    <div class="auth-backdrop" data-cerrar-reserva></div>
+    <div class="auth-card">
+      <button type="button" class="auth-cerrar" data-cerrar-reserva aria-label="Cerrar"><i data-lucide="x" aria-hidden="true"></i></button>
+      <img src="assets/img/logo.png" alt="Umami" class="auth-logo">
+      <h2 id="reserva-titulo" class="font-display text-2xl font-semibold text-center text-carbon">Reserva tu mesa</h2>
+      <p class="text-center text-sm text-carbon-mute mt-1">Completa tus datos y te confirmamos por correo en minutos.</p>
+
+      <form id="form-reserva" class="auth-form activo" novalidate style="margin-top:1.2rem;">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-campo">
+            <label for="r-nombre">Nombre</label>
+            <input type="text" id="r-nombre" name="nombre" class="form-control" autocomplete="given-name" placeholder="Tu nombre" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-apellido">Apellido</label>
+            <input type="text" id="r-apellido" name="apellido" class="form-control" autocomplete="family-name" placeholder="Tu apellido" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-tel">Teléfono</label>
+            <input type="tel" id="r-tel" name="telefono" class="form-control" autocomplete="tel" placeholder="+503 0000 0000" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-email">Correo electrónico</label>
+            <input type="email" id="r-email" name="email" class="form-control" autocomplete="email" placeholder="tucorreo@ejemplo.com" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-fecha">Fecha</label>
+            <input type="date" id="r-fecha" name="fecha" class="form-control" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-hora">Hora</label>
+            <input type="time" id="r-hora" name="hora" class="form-control" required>
+          </div>
+          <div class="form-campo">
+            <label for="r-mesas">Mesas</label>
+            <select id="r-mesas" name="mesas" class="form-control" required>
+              <option value="1">1 mesa</option>
+              <option value="2">2 mesas</option>
+              <option value="3">3 mesas</option>
+              <option value="4">4 mesas</option>
+              <option value="5">5 mesas</option>
+            </select>
+          </div>
+          <div class="form-campo">
+            <label for="r-personas">Personas</label>
+            <input type="number" id="r-personas" name="personas" class="form-control" min="1" max="40" placeholder="Número de personas">
+          </div>
+        </div>
+        <div class="form-campo">
+          <label for="r-comentarios">Comentarios (alergias, celebración, etc.)</label>
+          <textarea id="r-comentarios" name="comentarios" class="form-control" placeholder="Cuéntanos cualquier detalle"></textarea>
+        </div>
+        <p class="text-xs text-carbon-mute">Por ahora aceptamos un máximo de 5 mesas por reserva en línea. Para grupos mayores, escríbenos o llámanos.</p>
+        <div id="reserva-aviso" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary w-full"><i data-lucide="send" aria-hidden="true"></i>Enviar reserva</button>
+      </form>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      var WEB3FORMS_ACCESS_KEY = '0bfd2747-7b58-4c92-9b1f-c4320616333c';
+      var CORREO_RESERVAS = 'umami8reservas@gmail.com';
+      var modal = document.getElementById('modal-reserva');
+      var form = document.getElementById('form-reserva');
+      var aviso = document.getElementById('reserva-aviso');
+      if (!modal || !form) return;
+
+      function abrir() {
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        if (window.lucide) lucide.createIcons();
+      }
+      function cerrar() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll('[data-abrir-reserva]').forEach(function (b) {
+        b.addEventListener('click', abrir);
+      });
+      document.querySelectorAll('[data-cerrar-reserva]').forEach(function (b) {
+        b.addEventListener('click', cerrar);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) cerrar();
+      });
+
+      function val(id) {
+        var el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      }
+      function mostrar(tipo, texto) {
+        var color = tipo === 'ok' ? '#2f6b3c' : '#a93a2b';
+        aviso.innerHTML = '<span style="display:block;font-size:.85rem;font-weight:600;color:' + color + ';">' + texto + '</span>';
+      }
+      function resumen() {
+        return 'Nueva reserva Umami\n\n'
+          + 'Nombre: ' + val('r-nombre') + ' ' + val('r-apellido') + '\n'
+          + 'Teléfono: ' + val('r-tel') + '\n'
+          + 'Correo: ' + val('r-email') + '\n'
+          + 'Fecha: ' + val('r-fecha') + '\n'
+          + 'Hora: ' + val('r-hora') + '\n'
+          + 'Mesas: ' + val('r-mesas') + '\n'
+          + 'Personas: ' + (val('r-personas') || 'No indicado') + '\n'
+          + 'Comentarios: ' + (val('r-comentarios') || 'Ninguno');
+      }
+      function fallbackMailto() {
+        var asunto = 'Reserva Umami - ' + val('r-nombre') + ' ' + val('r-apellido');
+        var cuerpo = resumen();
+        window.location.href = 'mailto:' + CORREO_RESERVAS
+          + '?subject=' + encodeURIComponent(asunto)
+          + '&body=' + encodeURIComponent(cuerpo);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === 'TU_ACCESS_KEY_WEB3FORMS') {
+          mostrar('ok', 'Abrimos tu correo para enviar la reserva a ' + CORREO_RESERVAS + '. Si no se abre, escríbenos directamente.');
+          fallbackMailto();
+          return;
+        }
+        mostrar('ok', 'Enviando tu reserva...');
+        var datos = {
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: 'Reserva Umami - ' + val('r-nombre') + ' ' + val('r-apellido'),
+          from_name: val('r-nombre') + ' ' + val('r-apellido'),
+          nombre: val('r-nombre'),
+          apellido: val('r-apellido'),
+          telefono: val('r-tel'),
+          email: val('r-email'),
+          fecha: val('r-fecha'),
+          hora: val('r-hora'),
+          mesas: val('r-mesas'),
+          personas: val('r-personas'),
+          comentarios: val('r-comentarios')
+        };
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(datos)
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.success) {
+              mostrar('ok', '¡Reserva enviada! Te confirmaremos por correo muy pronto.');
+              form.reset();
+              setTimeout(cerrar, 2500);
+            } else {
+              mostrar('err', 'No se pudo enviar automáticamente. Abrimos tu correo como alternativa.');
+              fallbackMailto();
+            }
+          })
+          .catch(function () {
+            mostrar('err', 'No se pudo enviar automáticamente. Abrimos tu correo como alternativa.');
+            fallbackMailto();
+          });
+      });
+    })();
+  </script>
 </body>
 </html>
