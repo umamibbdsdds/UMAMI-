@@ -35,7 +35,6 @@
 </head>
 <body class="bg-crema text-carbon font-sans antialiased intro-activo">
 
-  <!-- ═══════════ INTRO LOADER (video de carga) ═══════════ -->
   <div id="intro-loader" class="intro-loader" role="presentation">
     <video id="intro-video" class="intro-video" autoplay muted playsinline preload="auto">
       <source src="assets/video/intro.mp4" type="video/mp4">
@@ -45,7 +44,6 @@
 
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
 
-  <!-- ═══════════ HEADER / NAVBAR (en Flask: partial compartido en base.html) ═══════════ -->
   <header id="site-header">
     <nav class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-16 lg:h-20" aria-label="Navegación principal">
       <a href="index.html" class="brand" aria-label="Umami — Inicio">
@@ -65,7 +63,6 @@
     </nav>
   </header>
 
-  <!-- ═══════════ MENÚ MÓVIL (overlay) ═══════════ -->
   <div id="mobile-menu" class="mobile-menu" role="dialog" aria-modal="true" aria-label="Menú de navegación" inert>
     <div class="mobile-menu-backdrop"></div>
     <div class="mobile-menu-panel">
@@ -93,7 +90,6 @@
 
   <main id="contenido">
 
-    <!-- ═══════════ HERO ═══════════ -->
     <section class="relative min-h-[92vh] flex items-center overflow-hidden" aria-labelledby="titulo-hero">
       <img src="assets/img/hero.jpg" alt="Lomo Saltado Umami, plato insignia de la casa: medallones de lomo wagyu con papas suflé sobre una salsa oscura de soya." class="hero-img absolute inset-0 w-full h-full object-cover" width="1376" height="768">
       <div class="absolute inset-0 bg-gradient-to-r from-carbon/85 via-carbon/60 to-carbon/25" aria-hidden="true"></div>
@@ -128,7 +124,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ EXPERIENCIA (3 pilares) ═══════════ -->
     <section id="experiencia" class="py-20 lg:py-28 bg-crema" aria-labelledby="titulo-experiencia">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl mx-auto text-center mb-14">
@@ -161,7 +156,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ PLATO INSIGNIA ═══════════ -->
     <section class="py-20 lg:py-28 bg-crema-sand" aria-labelledby="titulo-insignia">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div class="reveal vitrina aspect-[4/3] shadow-2xl">
@@ -188,7 +182,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ DESTACADOS DEL MENÚ ═══════════ -->
     <section class="py-20 lg:py-28 bg-crema" aria-labelledby="titulo-destacados">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-end justify-between gap-6 mb-12">
@@ -206,7 +199,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ TESTIMONIOS ═══════════ -->
     <section class="py-20 lg:py-28 bg-oliva-ink text-white relative overflow-hidden" aria-labelledby="titulo-testimonios">
       <span class="absolute -left-10 top-6 font-display text-[16rem] leading-none text-white/[.05] select-none pointer-events-none" aria-hidden="true">”</span>
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -230,7 +222,6 @@
       </div>
     </section>
 
-    <!-- ═══════════ CTA RESERVA ═══════════ -->
     <section class="relative py-20 lg:py-24 text-carbon overflow-hidden bg-crema" aria-labelledby="titulo-cta" style="background-image:url('assets/img/fondo-hojas.png');background-size:cover;background-position:center;">
       <div class="absolute inset-0 pointer-events-none" style="background:rgba(253,251,247,.55)" aria-hidden="true"></div>
       <span class="absolute right-6 -bottom-8 font-display text-[12rem] leading-none text-carbon/10 select-none pointer-events-none" aria-hidden="true">旨</span>
@@ -245,7 +236,6 @@
     </section>
   </main>
 
-  <!-- ═══════════ FOOTER (en Flask: partial compartido en base.html) ═══════════ -->
   <footer class="bg-carbon text-[#E8E4D9]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div>
@@ -271,7 +261,7 @@
         <ul class="space-y-3 text-sm text-[#B9B4A8]">
           <li class="dato-linea"><i data-lucide="map-pin" class="!text-terracota" aria-hidden="true"></i> 20 Avenida Norte y Diagonal Cipactli, San Salvador</li>
           <li class="dato-linea"><i data-lucide="phone" class="!text-terracota" aria-hidden="true"></i> <a href="tel:+50372008919" class="hover:text-dorado-light transition-colors duration-300">+503 7200 8919</a></li>
-          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:reservas@umami.sv" class="hover:text-dorado-light transition-colors duration-300">reservas@umami.sv</a></li>
+          <li class="dato-linea"><i data-lucide="mail" class="!text-terracota" aria-hidden="true"></i> <a href="mailto:umami8reservas@gmail.com" class="hover:text-dorado-light transition-colors duration-300">umami8reservas@gmail.com</a></li>
         </ul>
       </div>
       <div>
@@ -292,7 +282,6 @@
     </div>
   </footer>
 
-  <!-- ═══════════ BOTONES FLOTANTES (acciones rápidas) ═══════════ -->
   <div class="fab-acciones" aria-label="Acciones rápidas">
     <a href="menu.html" class="fab-btn fab-menu" aria-label="Consultar menú">
       <i data-lucide="utensils" aria-hidden="true"></i>
