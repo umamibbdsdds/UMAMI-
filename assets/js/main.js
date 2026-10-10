@@ -1,10 +1,4 @@
-/* ============================================================
-   UMAMI — Interacción (Vanilla JS)
-   Navbar sticky · Menú móvil accesible · Scroll reveal ·
-   Filtros de carta con loader · Carrusel de reseñas · Horarios
-   ============================================================ */
 
-/* ---------- Utilidades compartidas ---------- */
 
 function estrellasHTML(valor, extra) {
   const pct = Math.max(0, Math.min(100, (Number(valor) / 5) * 100));
@@ -87,8 +81,6 @@ function refrescarIconos() {
   if (window.lucide) lucide.createIcons();
 }
 
-/* ---------- Header sticky con blur ---------- */
-
 function initHeader() {
   const header = document.getElementById('site-header');
   if (!header) return;
@@ -96,8 +88,6 @@ function initHeader() {
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 }
-
-/* ---------- Menú móvil (overlay con panel deslizante) ---------- */
 
 function initMobileMenu() {
   const toggle = document.getElementById('menu-toggle');
@@ -144,8 +134,6 @@ function initMobileMenu() {
   });
 }
 
-/* ---------- Scroll reveal progresivo ---------- */
-
 function initReveal() {
   const els = document.querySelectorAll('.reveal');
   if (!('IntersectionObserver' in window)) {
@@ -162,8 +150,6 @@ function initReveal() {
   }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
   els.forEach(el => io.observe(el));
 }
-
-/* ---------- Página de menú: filtros + loader simulado ---------- */
 
 function initMenuPage() {
   const grid = document.getElementById('menu-grid');
@@ -308,8 +294,6 @@ function initMenuPage() {
   filtrar(650);
 }
 
-/* ---------- Inicio: destacados y vista previa de reseñas ---------- */
-
 function initDestacados() {
   const grid = document.getElementById('destacados-grid');
   if (!grid || typeof UMAMI === 'undefined') return;
@@ -341,8 +325,6 @@ function initPreviewResenas() {
   if (num) num.textContent = promedio;
   if (stars) stars.innerHTML = estrellasHTML(promedio);
 }
-
-/* ---------- Página de reseñas: promedio dinámico + carrusel ---------- */
 
 function initResenasPage() {
   const track = document.getElementById('resenas-track');
@@ -401,18 +383,15 @@ function initResenasPage() {
   actualizar();
 }
 
-/* Exponer para re-render tras publicar una reseña nueva (auth-resenas.js) */
 window.initResenasPage = initResenasPage;
-
-/* ---------- Horarios: estado abierto/cerrado + fila de hoy ---------- */
 
 function initHorarios() {
   const tabla = document.getElementById('tabla-horarios');
   if (!tabla || typeof UMAMI === 'undefined') return;
 
   const ahora = new Date();
-  const idxJS = ahora.getDay();                    // 0 = domingo
-  const idxHoy = idxJS === 0 ? 6 : idxJS - 1;      // horarios van de lunes a domingo
+  const idxJS = ahora.getDay();
+  const idxHoy = idxJS === 0 ? 6 : idxJS - 1;
   const H = UMAMI.horarios;
 
   const filaHoy = tabla.querySelector(`tr[data-dia="${idxJS}"]`);
@@ -453,8 +432,6 @@ function initHorarios() {
   badge.innerHTML = `<span class="punto" aria-hidden="true"></span>${texto}`;
 }
 
-/* ---------- Arranque ---------- */
-
 document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initMobileMenu();
@@ -472,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ═══════════ Intro loader (video de carga) ═══════════ */
 (function () {
   var loader = document.getElementById('intro-loader');
   if (!loader) return;
@@ -491,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 700);
   }
 
-  // Mostrar solo una vez por sesión (al cerrar el navegador se reinicia).
   var yaVisto = false;
   try { yaVisto = !!sessionStorage.getItem('umami_intro_visto'); } catch (e) {}
   if (yaVisto) { cerrar(); return; }
@@ -501,10 +476,10 @@ document.addEventListener('DOMContentLoaded', () => {
     video.addEventListener('ended', cerrar);
     var intento = video.play();
     if (intento && typeof intento.catch === 'function') {
-      intento.catch(function () { /* autoplay bloqueado: se cerrará por tiempo o al saltar */ });
+      intento.catch(function () {  });
     }
   }
   if (skip) skip.addEventListener('click', cerrar);
-  // Salvavidas: si el video no carga/termina, cerrar tras 15 s
+
   setTimeout(cerrar, 15000);
 })();
