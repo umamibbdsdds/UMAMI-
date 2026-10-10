@@ -13,13 +13,8 @@ const UMAMI = {
     maps: 'https://maps.google.com/?q=20+Avenida+Norte,+Diagonal+Cipactli,+San+Salvador,+El+Salvador'
   },
 
-  /* ---------- Carta (16 platos · 4 categorías) ----------
-     alergenos: gluten | lacteos | huevo | pescado | mariscos | sesamo | soya
-     etiquetas: vegetariano | vegano
-     tiempo: minutos estimados de preparación
-  ----------------------------------------------------------- */
   menu: [
-    // ── Entradas ──────────────────────────────────────────────
+
     {
       id: 'tiradito-nikkei',
       nombre: 'Tiradito Nikkei',
@@ -73,7 +68,6 @@ const UMAMI = {
       destacado: false
     },
 
-    // ── Platos fuertes ────────────────────────────────────────
     {
       id: 'lomo-umami',
       nombre: 'Lomo Saltado Umami',
@@ -127,7 +121,6 @@ const UMAMI = {
       destacado: false
     },
 
-    // ── Postres ───────────────────────────────────────────────
     {
       id: 'suspiro-limeno',
       nombre: 'Suspiro Reinterpretado',
@@ -181,7 +174,6 @@ const UMAMI = {
       destacado: false
     },
 
-    // ── Bebidas ───────────────────────────────────────────────
     {
       id: 'pisco-sour-umami',
       nombre: 'Pisco Sour Umami',
@@ -236,7 +228,6 @@ const UMAMI = {
     }
   ],
 
-  /* ---------- Reseñas destacadas (el promedio se calcula en JS) ---------- */
   resenas: [
     {
       nombre: 'Valeria Rodríguez',
@@ -310,7 +301,6 @@ const UMAMI = {
     }
   ],
 
-  /* Distribución global de calificaciones (Google y TripAdvisor) */
   distribucion: [
     { estrellas: 5, porcentaje: 78 },
     { estrellas: 4, porcentaje: 15 },
@@ -319,13 +309,12 @@ const UMAMI = {
     { estrellas: 1, porcentaje: 1 }
   ],
 
-  /* ---------- Horarios (el estado abierto/cerrado se calcula en JS) ---------- */
   horarios: [
-    { dia: 'Lunes', abre: null, cierra: null },          // Cerrado
+    { dia: 'Lunes', abre: null, cierra: null },
     { dia: 'Martes', abre: '13:00', cierra: '23:00' },
     { dia: 'Miércoles', abre: '13:00', cierra: '23:00' },
     { dia: 'Jueves', abre: '13:00', cierra: '23:00' },
-    { dia: 'Viernes', abre: '13:00', cierra: '00:00' },  // Cruza medianoche
+    { dia: 'Viernes', abre: '13:00', cierra: '00:00' },
     { dia: 'Sábado', abre: '12:30', cierra: '00:00' },
     { dia: 'Domingo', abre: '12:30', cierra: '17:00' }
   ]
