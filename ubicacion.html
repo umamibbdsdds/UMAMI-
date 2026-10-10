@@ -478,8 +478,10 @@
         mostrar('ok', 'Enviando tu reserva...');
         var datos = {
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: 'Reserva Umami - ' + val('r-nombre') + ' ' + val('r-apellido'),
-          from_name: val('r-nombre') + ' ' + val('r-apellido'),
+          subject: 'Nueva reserva Umami - ' + val('r-nombre') + ' ' + val('r-apellido'),
+          from_name: 'Reservas Umami',
+          replyto: val('r-email'),
+          message: resumen(),
           nombre: val('r-nombre'),
           apellido: val('r-apellido'),
           telefono: val('r-tel'),
@@ -487,8 +489,8 @@
           fecha: val('r-fecha'),
           hora: val('r-hora'),
           mesas: val('r-mesas'),
-          personas: val('r-personas'),
-          comentarios: val('r-comentarios')
+          personas: (val('r-personas') || 'No indicado'),
+          comentarios: (val('r-comentarios') || 'Ninguno')
         };
         fetch('https://api.web3forms.com/submit', {
           method: 'POST',
