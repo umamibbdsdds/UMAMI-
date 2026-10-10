@@ -323,7 +323,7 @@
 
   <div class="auth-modal" id="modal-reserva" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="reserva-titulo">
     <div class="auth-backdrop" data-cerrar-reserva></div>
-    <div class="auth-card">
+    <div class="auth-card" style="width: min(760px, 94vw);">
       <button type="button" class="auth-cerrar" data-cerrar-reserva aria-label="Cerrar"><i data-lucide="x" aria-hidden="true"></i></button>
       <img src="assets/img/logo.png" alt="Umami" class="auth-logo">
       <h2 id="reserva-titulo" class="font-display text-2xl font-semibold text-center text-carbon">Reserva tu mesa</h2>
@@ -384,10 +384,15 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
   <script>
     (function () {
       var WEB3FORMS_ACCESS_KEY = '0bfd2747-7b58-4c92-9b1f-c4320616333c';
       var CORREO_RESERVAS = 'umami8reservas@gmail.com';
+      var CFG = window.UMAMI_SUPABASE || {};
+      var sbReservas = (CFG.url && CFG.anonKey && window.supabase && window.supabase.createClient)
+        ? window.supabase.createClient(CFG.url, CFG.anonKey) : null;
       var modal = document.getElementById('modal-reserva');
       var form = document.getElementById('form-reserva');
       var aviso = document.getElementById('reserva-aviso');
@@ -441,6 +446,22 @@
           + '?subject=' + encodeURIComponent(asunto)
           + '&body=' + encodeURIComponent(cuerpo);
       }
+      function guardarEnNube() {
+        if (!sbReservas) return Promise.resolve();
+        return sbReservas.from('reservas').insert({
+          nombre: val('r-nombre'),
+          apellido: val('r-apellido'),
+          telefono: val('r-tel'),
+          email: val('r-email'),
+          fecha: val('r-fecha'),
+          hora: val('r-hora'),
+          mesas: parseInt(val('r-mesas'), 10) || null,
+          personas: parseInt(val('r-personas'), 10) || null,
+          comentarios: val('r-comentarios')
+        }).then(function (res) {
+          if (res && res.error) console.warn('Umami: no se pudo guardar la reserva en la nube.');
+        }).catch(function () {});
+      }
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -448,6 +469,7 @@
           form.reportValidity();
           return;
         }
+        guardarEnNube();
         if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === 'TU_ACCESS_KEY_WEB3FORMS') {
           mostrar('ok', 'Abrimos tu correo para enviar la reserva a ' + CORREO_RESERVAS + '. Si no se abre, escríbenos directamente.');
           fallbackMailto();
