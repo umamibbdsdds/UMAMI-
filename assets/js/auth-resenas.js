@@ -1,12 +1,4 @@
-/* ============================================================
-   UMAMI — Login/registro + reseñas compartidas
-   Dos modos automáticos:
-   • NUBE: si configuras Supabase en assets/js/supabase-config.js,
-     las cuentas y reseñas se guardan en la nube y las ven TODOS
-     los visitantes.
-   • LOCAL: si no hay configuración, todo se guarda en el navegador
-     (localStorage) y solo lo ve ese dispositivo (modo demo).
-   ============================================================ */
+
 (function () {
   'use strict';
   if (typeof UMAMI === 'undefined') return;
@@ -20,8 +12,8 @@
   var LS_RESENAS = 'umami_resenas_usuarios';
 
   var SEED = (window.__UMAMI_SEED_RESENAS = window.__UMAMI_SEED_RESENAS || UMAMI.resenas.slice());
-  var _ses = null;            // sesión actual (modo nube)
-  var _resenasRemotas = [];   // reseñas cargadas de la nube
+  var _ses = null;
+  var _resenasRemotas = [];
 
   function leer(k, def) { try { return JSON.parse(localStorage.getItem(k)) || def; } catch (e) { return def; } }
   function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
@@ -48,7 +40,6 @@
     return msg;
   }
 
-  /* ---------- Capa de datos (nube o local) ---------- */
   function sesionLocal() { return leer(LS_SESSION, null); }
   function usuariosLocal() { return leer(LS_USERS, []); }
   function listaResenasLocal() { return leer(LS_RESENAS, []); }
@@ -85,8 +76,8 @@
     } else { _ses = null; }
   }
 
-  sincronizar(); // primera pintura (modo local trae sus reseñas; nube trae solo seed hasta cargar)
-  /* ---------- Modal de autenticación ---------- */
+  sincronizar();
+
   var modal, ultimoFoco = null;
 
   function abrirModal(tab) {
@@ -201,7 +192,7 @@
 
     iconos();
   }
-  /* ---------- Panel de reseña (según sesión) ---------- */
+
   function opcionesPlatos() {
     return UMAMI.menu.map(function (p) {
       return '<option value="' + escapar(p.nombre) + '">' + escapar(p.nombre) + '</option>';
