@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var ADMIN_EMAIL = 'umami8reservas@gmail.com';
+  var ADMIN_EMAIL = 'dimitri05102024@gmail.com';
 
   var CFG = window.UMAMI_SUPABASE || {};
   var NUBE = !!(CFG.url && CFG.anonKey && window.supabase && window.supabase.createClient);
