@@ -56,7 +56,7 @@
   }
 
   function mapFila(r) {
-    return { nombre: r.nombre, email: r.email || '', fecha: r.fecha || '', estrellas: r.estrellas, plato: r.plato, texto: r.texto };
+    return { id: r.id, user_id: r.user_id || null, nombre: r.nombre, email: r.email || '', fecha: r.fecha || '', estrellas: r.estrellas, plato: r.plato, texto: r.texto };
   }
 
   function cargarResenasRemotas() {
@@ -294,6 +294,83 @@
     marcarPropias();
   }
 
+  function actualizarResena(resena, indice, cambios, onError) {
+    if (NUBE) {
+      if (!resena.id) { if (onError) onError('No se pudo identificar esta reseña.'); return; }
+      sb.from('resenas').update({ estrellas: cambios.estrellas, plato: cambios.plato, texto: cambios.texto })
+        .eq('id', resena.id)
+        .then(function (res) {
+          if (res.error) { if (onError) onError('No se pudo guardar: ' + traducir(res.error.message)); return; }
+          cargarResenasRemotas().then(function () { refrescarVista(); });
+        });
+      return;
+    }
+    var lista = listaResenasLocal();
+    if (indice < 0 || indice >= lista.length) { if (onError) onError('No se pudo identificar esta reseña.'); return; }
+    lista[indice].estrellas = cambios.estrellas;
+    lista[indice].plato = cambios.plato;
+    lista[indice].texto = cambios.texto;
+    guardar(LS_RESENAS, lista);
+    refrescarVista();
+  }
+
+  function opcionesPlatosSel(platoActual) {
+    return UMAMI.menu.map(function (p) {
+      var sel = (p.nombre === platoActual) ? ' selected' : '';
+      return '<option value="' + escapar(p.nombre) + '"' + sel + '>' + escapar(p.nombre) + '</option>';
+    }).join('');
+  }
+
+  function abrirEdicion(card, resena, indice) {
+    if (card.querySelector('.resena-edit')) return;
+    card.dataset.htmlOriginal = card.innerHTML;
+    card.innerHTML =
+      '<form class="resena-edit flex flex-col gap-4" novalidate>' +
+        '<div class="form-campo">' +
+          '<label>Tu calificación</label>' +
+          '<div class="estrellas-input" role="radiogroup">' +
+            [5,4,3,2,1].map(function (n) {
+              return '<input type="radio" name="edit-estrellas" id="edit-star' + n + '" value="' + n + '"' + (n === resena.estrellas ? ' checked' : '') + '>' +
+                     '<label for="edit-star' + n + '" title="' + n + ' estrellas" aria-label="' + n + ' estrellas">★</label>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div class="form-campo">' +
+          '<label>¿Qué plato recomiendas?</label>' +
+          '<select class="form-control edit-plato" required>' + opcionesPlatosSel(resena.plato) + '</select>' +
+        '</div>' +
+        '<div class="form-campo">' +
+          '<label>Tu reseña</label>' +
+          '<textarea class="form-control edit-texto" maxlength="600" required>' + escapar(resena.texto) + '</textarea>' +
+        '</div>' +
+        '<div class="edit-aviso form-aviso" role="alert" aria-live="polite"></div>' +
+        '<div class="flex flex-wrap gap-2">' +
+          '<button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check" aria-hidden="true"></i>Guardar</button>' +
+          '<button type="button" class="btn btn-outline-dark btn-sm edit-cancelar"><i data-lucide="x" aria-hidden="true"></i>Cancelar</button>' +
+        '</div>' +
+      '</form>';
+    iconos();
+
+    card.querySelector('.edit-cancelar').addEventListener('click', function () {
+      card.innerHTML = card.dataset.htmlOriginal;
+      delete card.dataset.htmlOriginal;
+      refrescarVista();
+    });
+
+    card.querySelector('.resena-edit').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var avisoEl = card.querySelector('.edit-aviso');
+      var estrellas = Number((card.querySelector('input[name="edit-estrellas"]:checked') || {}).value || 0);
+      var plato = card.querySelector('.edit-plato').value;
+      var texto = card.querySelector('.edit-texto').value.trim();
+      if (!estrellas) { avisoEl.className = 'edit-aviso form-aviso error'; avisoEl.textContent = 'Elige una calificación.'; return; }
+      if (texto.length < 12) { avisoEl.className = 'edit-aviso form-aviso error'; avisoEl.textContent = 'Escribe un poco más (mínimo 12 caracteres).'; return; }
+      actualizarResena(resena, indice, { estrellas: estrellas, plato: plato, texto: texto }, function (msg) {
+        avisoEl.className = 'edit-aviso form-aviso error'; avisoEl.textContent = msg;
+      });
+    });
+  }
+
   function marcarPropias() {
     var track = document.getElementById('resenas-track');
     if (!track) return;
@@ -301,8 +378,19 @@
     var mios = misResenas();
     for (var i = 0; i < mios.length; i++) {
       var card = track.children[i];
-      if (card && ses && mios[i].email && mios[i].email === ses.email) card.classList.add('resena-propia');
+      if (!card || !ses || !mios[i].email || mios[i].email !== ses.email) continue;
+      card.classList.add('resena-propia');
+      if (card.querySelector('.resena-editar-btn') || card.querySelector('.resena-edit')) continue;
+      (function (c, resena, indice) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-outline-dark btn-sm resena-editar-btn';
+        btn.innerHTML = '<i data-lucide="pencil" aria-hidden="true"></i>Editar';
+        btn.addEventListener('click', function () { abrirEdicion(c, resena, indice); });
+        c.appendChild(btn);
+      })(card, mios[i], i);
     }
+    iconos();
   }
 
   document.addEventListener('DOMContentLoaded', function () {
